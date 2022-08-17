@@ -7,7 +7,7 @@
 
 <script>
 import ButtonComponent from "./ButtonComponent.vue"
-import { mapMutations } from "vuex"
+import { mapActions } from "vuex"
 export default {
     name: "HeaderComponent",
     props: {
@@ -17,7 +17,7 @@ export default {
         ButtonComponent
     },
     methods: {
-        ...mapMutations(["toggleShowAddClientModal"])
+        ...mapActions(["toggleShowAddClientModal"])
     }
 }
 </script>

@@ -6,6 +6,7 @@ export default {
       clients: [],
       client: null,
       errorMessage: null,
+      successMessage: null,
       showAddClientModal: false,
       showEditClientModal: false,
   },
@@ -15,6 +16,9 @@ export default {
     },
     SET_ERROR_MESSAGE(state, message) {
       state.errorMessage = message;
+    },
+    SET_SUCCESS_MESSAGE(state, message) {
+      state.successMessage = message;
     },
     SET_CLIENTS(state, clients) {
       state.clients = clients;
@@ -31,10 +35,16 @@ export default {
     },
   },
   actions: {
+    toggleShowAddClientModal({ commit }) {
+      commit("toggleShowAddClientModal")
+    },
+    toggleShowEditClientModal({ commit }, client) {
+      commit("toggleShowEditClientModal", client)
+    },
     async getAllClients({ commit }) {
       try {
         commit("SET_LOADING", true);
-        // let dataURL = "https://jsonplaceholder.typicode.com/users";
+        // let dataURL = "https://jsonplaceholder.typicode.com/Clients";
         const response = await axios.get(`${process.env.VUE_APP_API}client`);
         commit("SET_CLIENTS", response.data.data);
         commit("SET_LOADING", false);
@@ -45,26 +55,42 @@ export default {
       }
     },
     async addAClient({ commit }, client) {
-      const response = await axios.post(`${process.env.VUE_APP_API}client`, {
-        ...client,
-        completed: false,
-      });
+      try {   
+        const response = await axios.post(`${process.env.VUE_APP_API}client`, {
+          ...client,
+          completed: false,
+        });
+        commit("ADD_NEW_CLIENT", response.data.data);
+        const message = "Client added successfully";
+        commit("SET_SUCCESS_MESSAGE", message);
+        commit("toggleShowAddClientModal");
+        window.location.reload();
+      } catch (error) {
+        commit("SET_ERROR_MESSAGE", error);
+        commit("toggleShowAddClientModal");
+      }
 
-      commit("ADD_NEW_CLIENT", response.data.data);
-      window.location.reload();
     },
 
     async editAClient({ commit }, { id, client }) {
-      const response = await axios.post(
-        `${process.env.VUE_APP_API}client/edit/${id}`,
-        {
-          ...client,
-          completed: false,
-        }
-       );
-
-      commit("editClient", response.data.data);
-      window.location.reload();
+      try {
+        const response = await axios.post(
+          `${process.env.VUE_APP_API}client/edit/${id}`,
+          {
+            ...client,
+            completed: false,
+          }
+         );
+  
+        commit("editClient", response.data.data);
+        const message = "Client updated successfully";
+        commit("SET_SUCCESS_MESSAGE", message);
+        commit("toggleShowEditClientModal");
+        window.location.reload();
+      } catch (error) {
+        commit("SET_ERROR_MESSAGE", error);
+        commit("toggleShowEditClientModal");
+      }
     },
 
     async deleteClient({ commit }, id) {
@@ -72,6 +98,8 @@ export default {
         await axios.delete(`${process.env.VUE_APP_API}client/delete/${id}`);
   
         commit("removeClient", id);
+        const message = "Client deleted successfully";
+        commit("SET_SUCCESS_MESSAGE", message);
         window.location.reload();
       } catch (error) {
         commit("SET_ERROR_MESSAGE", error);
@@ -82,6 +110,7 @@ export default {
     clients: state => state.clients,
     client: state => state.client,
     errorMessage: state => state.errorMessage,
+    successMessage: state => state.successMessage,
     loading: state => state.loading,
     showAddClientModal: state => state.showAddClientModal,
     showEditClientModal: state => state.showEditClientModal,

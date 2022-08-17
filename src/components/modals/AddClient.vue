@@ -81,11 +81,6 @@ export default {
               providers: providers,
             }
             this.addAClient(client);
-            setInterval(() => {
-                this.loading = false;
-            }, 3000)
-            this.message = "Client Added Successfully"
-            this.loading = true;
           }
         },
   computed: mapGetters(['allProviders']),

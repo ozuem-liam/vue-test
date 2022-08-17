@@ -2,9 +2,6 @@
         <div v-if="loading">
             loading...
         </div>
-        <div v-if="errorMessage">
-            <p>{{errorMessage}}</p>
-        </div>
         <table v-if="!loading && clients?.length > 0">
             <tr class="t-head">
                 <th>Name</th>
@@ -23,22 +20,27 @@
                 <td @click="deleteClient(client._id)" class="edit">Delete</td>
             </tr>
         </table>
+        <div v-if="errorMessage">
+            <p>{{errorMessage}}</p>
+        </div>
+        <div v-if="successMessage">
+            <p>{{successMessage}}</p>
+        </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 export default {
     name: "ClientsComponent",
     methods: {
-        ...mapActions(['fetchClientApi', 'deleteClient']),
-        ...mapMutations(["toggleShowEditClientModal"]),
+        ...mapActions(['fetchClientApi', 'deleteClient', 'toggleShowEditClientModal']),
         onClick(client) {
             this.selectAClient(client)
             this.$emit('link-click');
         },
     },
     computed: {
-      ...mapGetters(["clients", "loading", "errorMessage"])
+      ...mapGetters(["clients", "loading", "errorMessage", "successMessage"])
     },
     mounted() {
         this.$store.dispatch("getAllClients");
