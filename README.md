@@ -1,5 +1,10 @@
 # vue-test
 
+## Clone Project
+```
+git clone <github-url> <appname>
+```
+
 ## Project setup
 ```
 yarn install
